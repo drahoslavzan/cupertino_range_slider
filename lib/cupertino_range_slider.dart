@@ -424,18 +424,29 @@ class _RenderCupertinoSlider extends RenderConstrainedBox {
 
   @override
   bool hitTestSelf(Offset position) {
-    if ((position.dx - _minThumbCenter).abs() <
-        CupertinoThumbPainter.radius + _kPadding) {
+    if (_testNear(position, _minThumbCenter)) {
+      if (_testNear(position, _maxThumbCenter)) {
+        pickedThumb = _minValue > (1.0 - _maxValue) ? _kMinThumb : _kMaxThumb;
+        return true;
+      }
+
       pickedThumb = _kMinThumb;
       return true;
     }
 
-    if ((position.dx - _maxThumbCenter).abs() <
-        CupertinoThumbPainter.radius + _kPadding) {
+    if (_testNear(position, _maxThumbCenter)) {
       pickedThumb = _kMaxThumb;
       return true;
     }
 
+    return false;
+  }
+
+  bool _testNear(Offset position, double thumb) {
+    if ((position.dx - thumb).abs() <
+        CupertinoThumbPainter.radius + _kPadding) {
+      return true;
+    }
     return false;
   }
 
